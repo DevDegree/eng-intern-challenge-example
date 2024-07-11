@@ -73,7 +73,6 @@ def braille_to_english(input)
   result
 end
 
-# Main function to handle the translation
 # Main function to handle the translation based on the input type.
 def main
   input = ARGV.join(" ")  # Combine command line arguments into a single string.
