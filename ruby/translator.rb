@@ -28,23 +28,23 @@ end
 
 # Function to translate English to Braille
 def english_to_braille(input)
-  in_number_mode = false
+  in_number_mode = false  # Flag to track if the current context is numeric.
   input.chars.map do |char|
     if char == ' '
-      in_number_mode = false
+      in_number_mode = false  # Reset number mode on encountering a space.
       BRAILLE[char]
     elsif char =~ /\d/
       if !in_number_mode
-        in_number_mode = true
+        in_number_mode = true  # Set number mode when a digit is first encountered.
         BRAILLE['#'] + get_braille_number(char)
       else
         get_braille_number(char)
       end
     else
       in_number_mode = false
-      is_capital = char.upcase == char && char.downcase != char
-      char = BRAILLE[char.downcase] || ''
-      is_capital ? BRAILLE['upcase'] + char : char
+      is_capital = char.upcase == char && char.downcase != char  # Check if the character is a capital letter.
+      char = BRAILLE[char.downcase] || ''  # Translate to Braille or use an empty string if no mapping exists.
+      is_capital ? BRAILLE['upcase'] + char : char  # Prefix with upcase Braille if the character is capital.
     end
   end.join
 end
@@ -52,21 +52,21 @@ end
 # Function to translate Braille to English
 def braille_to_english(input)
   result = ''
-  in_number_mode = false
+  in_number_mode = false  # Flag to track numeric context.
   i = 0
   while i < input.length
-    char = input[i, 6]
+    char = input[i, 6]  # Extract a segment of 6 characters which represents one Braille character.
     if char == BRAILLE['upcase']
-      i += 6
+      i += 6  # Skip the next 6 characters as they represent an uppercase letter.
       next_char = input[i, 6]
-      result += (ENGLISH[next_char] || '').upcase
+      result += (ENGLISH[next_char] || '').upcase  # Convert the next Braille character to uppercase.
     elsif char == BRAILLE['#']
-      in_number_mode = true
+      in_number_mode = true  # Enter number mode on encountering the number sign.
     elsif char == BRAILLE[' ']
-      in_number_mode = false
+      in_number_mode = false  # Exit number mode on space.
       result += ' '
     else
-      result += in_number_mode ? get_english_number(char).to_s : ENGLISH[char]
+      result += in_number_mode ? get_english_number(char).to_s : ENGLISH[char]  # Append the translated character or number.
     end
     i += 6
   end
@@ -74,9 +74,11 @@ def braille_to_english(input)
 end
 
 # Main function to handle the translation
+# Main function to handle the translation based on the input type.
 def main
-  input = ARGV.join(" ")
+  input = ARGV.join(" ")  # Combine command line arguments into a single string.
 
+  # Output the translation based on whether the input is Braille or English.
   puts is_braille?(input) ? 
     braille_to_english(input) 
     : english_to_braille(input)
